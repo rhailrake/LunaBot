@@ -7,4 +7,23 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="DSharpPlus" Version="5.0.0-nightly-00009" />
+      <PackageReference Include="DSharpPlus.CommandsNext" Version="5.0.0-nightly-00009" />
+      <PackageReference Include="DSharpPlus.Interactivity" Version="5.0.0-nightly-00009" />
+      <PackageReference Include="DSharpPlus.Lavalink" Version="5.0.0-nightly-00009" />
+      <PackageReference Include="DSharpPlus.Rest" Version="5.0.0-nightly-00009" />
+      <PackageReference Include="DSharpPlus.SlashCommands" Version="5.0.0-nightly-00009" />
+      <PackageReference Include="DSharpPlus.VoiceNext" Version="5.0.0-nightly-00009" />
+      <PackageReference Include="DSharpPlus.VoiceNext.Natives" Version="1.0.0" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3-beta1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="secrets\" />
+        <Content Include="secrets\cfg.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
 </Project>
