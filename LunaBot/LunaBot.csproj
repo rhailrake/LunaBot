@@ -16,6 +16,8 @@
       <PackageReference Include="DSharpPlus.SlashCommands" Version="5.0.0-nightly-00009" />
       <PackageReference Include="DSharpPlus.VoiceNext" Version="5.0.0-nightly-00009" />
       <PackageReference Include="DSharpPlus.VoiceNext.Natives" Version="1.0.0" />
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" />
+      <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3-beta1" />
     </ItemGroup>
 

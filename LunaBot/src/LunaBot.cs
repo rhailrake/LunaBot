@@ -1,75 +1,60 @@
-using System.Text;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
-using DSharpPlus.CommandsNext.Exceptions;
-using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Extensions;
-using LunaBot.Commands;
-using Newtonsoft.Json;
+using LunaBot.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace LunaBot;
 
 public class LunaBot
 {
     private DiscordClient? Client { get; set; }
-    public InteractivityExtension Interactivity { get; private set; }
-    public CommandsNextExtension? Commands { get; set; }
+    private CommandsNextExtension? Commands { get; set; }
 
     public async Task RunAsync() 
     {
-        string json;
-        await using (var fs = File.OpenRead("secrets/cfg.json"))
-        using (var sr = new StreamReader(fs, new UTF8Encoding(false)))
-            json = await sr.ReadToEndAsync();
-
-        var configJson = JsonConvert.DeserializeObject<Config>(json);
-
-        var config = new DiscordConfiguration()
+        Console.WriteLine($"[info] Started loading LunaBot at {DateTime.Now}");
+        Console.WriteLine("[info] Loading config file..");
+        var config = Config.LoadFromFile("secrets/cfg.json");
+        Console.WriteLine("[info] Loaded config file!");
+        var discordConfig = new DiscordConfiguration()
         {
             Intents = DiscordIntents.All,
-            Token = configJson.Token,
+            Token = config.Token,
             TokenType = TokenType.Bot,
             AutoReconnect = true,
+            MinimumLogLevel = LogLevel.Critical
         };
 
-        Client = new DiscordClient(config);
+        Client = new DiscordClient(discordConfig);
         Client.UseInteractivity(new InteractivityConfiguration()
         {
             Timeout = TimeSpan.FromMinutes(2)
         });
 
-        var commandsConfig = new CommandsNextConfiguration()
+        Commands = Client.UseCommandsNext(new CommandsNextConfiguration
         {
-            StringPrefixes = new string[] { configJson.Prefix },
+            StringPrefixes = new string[] { config.Prefix },
             EnableMentionPrefix = true,
             EnableDms = false,
             EnableDefaultHelp = false
-        };
+        });
         
-        // Commands register
-        Commands = Client.UseCommandsNext(commandsConfig);
-        Commands.RegisterCommands<Other>();
+        var commandHandler = new CommandsHandler(Commands);
+        await commandHandler.InstallCommandsAsync();
         
-        Commands.CommandErrored += async (s, e) =>
-        {
-            if (e.Exception is CommandNotFoundException)
-            {
-                // создаем красивый эмбед, сообщающий, что команда не найдена
-                var embed = new DiscordEmbedBuilder
-                {
-                    Title = "ERROR 404",
-                    Description = "Команда не найдена, напишите !help для доступных команд.",
-                    Color = new DiscordColor(0xFF0000)
-                };
-
-                // отправляем эмбед в канал, откуда пришла команда
-                await e.Context.RespondAsync(embed: embed);
-            }
-        };
-
+        Console.WriteLine("[status] Setting up status..");
+        Task.Run(() => new LunaStatus(Client).RunAsync());
+        Console.WriteLine("[status] Loaded!");
+        
         await Client.ConnectAsync();
+
+        await commandHandler.LogAboutAllCommands();
+        
+        Console.WriteLine($"Finished loading at {DateTime.Now} | LunaBot has started..");
+
         await Task.Delay(-1);
     }
     
