@@ -42,17 +42,18 @@ public class CommandsHandler
 
     public async Task LogAboutAllCommands()
     {
+        var logger = new Logger("logs/logs.json");
         var commandModules = _commands.RegisteredCommands.Values
-            .GroupBy(c => c.Module.ModuleType.Name);
+            .GroupBy(c => c.Module!.ModuleType.Name);
         
-        Console.WriteLine("[commands] info start:");
+        logger.Log("[commands] info start:");
         
         foreach (var module in commandModules)
         {
-            Console.WriteLine($"[{module.Key}] Registered {module.Count()} command(s).");
+            logger.Log($"[{module.Key}] Registered {module.Count()} command(s).");
         }
         
-        Console.WriteLine("[commands] info end. ");
+        logger.Log("[commands] info end. ");
         
         await Task.CompletedTask;
     }

@@ -15,10 +15,18 @@ public class LunaBot
 
     public async Task RunAsync() 
     {
-        Console.WriteLine($"[info] Started loading LunaBot at {DateTime.Now}");
-        Console.WriteLine("[info] Loading config file..");
+        // Logs
+        var logger = new Logger("logs/logs.json");
+        logger.Log("[Logs] attached!");
+        // Logs
+        
+        // Config
+        logger.Log($"[info] Started loading LunaBot at {DateTime.Now}");
+        logger.Log("[info] Loading config file..");
         var config = Config.LoadFromFile("secrets/cfg.json");
-        Console.WriteLine("[info] Loaded config file!");
+        logger.Log("[info] Loaded config file!");
+        // Config
+
         var discordConfig = new DiscordConfiguration()
         {
             Intents = DiscordIntents.All,
@@ -45,15 +53,15 @@ public class LunaBot
         var commandHandler = new CommandsHandler(Commands);
         await commandHandler.InstallCommandsAsync();
         
-        Console.WriteLine("[status] Setting up status..");
+        logger.Log("[status] Setting up status..");
         Task.Run(() => new LunaStatus(Client).RunAsync());
-        Console.WriteLine("[status] Loaded!");
+        logger.Log("[status] Loaded!");
         
         await Client.ConnectAsync();
 
         await commandHandler.LogAboutAllCommands();
         
-        Console.WriteLine($"Finished loading at {DateTime.Now} | LunaBot has started..");
+        logger.Log($"Finished loading at {DateTime.Now} | LunaBot has started..");
 
         await Task.Delay(-1);
     }

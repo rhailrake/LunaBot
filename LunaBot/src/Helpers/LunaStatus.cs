@@ -1,5 +1,6 @@
 using DSharpPlus;
 using DSharpPlus.Entities;
+using LunaBot.Helpers;
 
 public class LunaStatus
 {
@@ -34,7 +35,8 @@ public class LunaStatus
             }
             catch (Exception ex)
             {
-                // Console.WriteLine($"Error updating Luna status: {ex.Message}");
+                //var logger = new Logger("logs/logs.json");
+                // logger.Log($"Error updating Luna status: {ex.Message}");
             }
         }
     }

@@ -22,7 +22,7 @@ public class Info : BaseCommandModule
             
             var modules = ctx.CommandsNext.RegisteredCommands.Values
                 .Where(c => !c.IsHidden)
-                .GroupBy(c => c.Module.ModuleType.Name);
+                .GroupBy(c => c.Module!.ModuleType.Name);
             
             foreach (var module in modules)
             {
@@ -37,8 +37,8 @@ public class Info : BaseCommandModule
         else
         {
             var module = ctx.CommandsNext.RegisteredCommands.Values
-                .Where(c => !c.IsHidden && c.Module.ModuleType.Name.ToLowerInvariant() == category.ToLowerInvariant())
-                .GroupBy(c => c.Module.ModuleType.Name)
+                .Where(c => !c.IsHidden && c.Module!.ModuleType.Name.ToLowerInvariant() == category.ToLowerInvariant())
+                .GroupBy(c => c.Module!.ModuleType.Name)
                 .FirstOrDefault();
             
             if (module == null)
@@ -54,7 +54,7 @@ public class Info : BaseCommandModule
             foreach (var command in module)
             {
 
-                embed.AddField($"{command.Name}", command.Description, inline: false);
+                embed.AddField($"{command.Name}", command.Description!, inline: false);
             }
             
             await ctx.RespondAsync(embed: embed.Build());

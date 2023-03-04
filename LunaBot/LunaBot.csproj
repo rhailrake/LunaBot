@@ -26,6 +26,10 @@
         <Content Include="secrets\cfg.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+        <Folder Include="logs\" />
+        <Content Include="logs\logs.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
 </Project>
