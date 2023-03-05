@@ -31,33 +31,15 @@ public class CommandsHandler
 
     public async Task InstallCommandsAsync()
     {
-        // Register commands here:
-        _commands.RegisterCommands<Logs>();
-        _commands.RegisterCommands<Info>();
-        _commands.RegisterCommands<Tools>();
-        _commands.RegisterCommands<Images>();
-        _commands.RegisterCommands<Fun>();
-
-        await Task.CompletedTask;
-    }
-
-    public async Task LogAboutAllCommands()
-    {
         try
         {
-            var logger = new Logger("logs/logs.json");
-            var commandModules = _commands.RegisteredCommands.Values
-                .GroupBy(c => c.Module!.ModuleType.Name);
-        
-            logger.Log("[commands] info start:");
-        
-            foreach (var module in commandModules)
-            {
-                logger.Log($"[{module.Key}] Registered {module.Count()} command(s).");
-            }
-        
-            logger.Log("[commands] info end. ");
-        
+            // Register commands here:
+            _commands.RegisterCommands<Logs>();
+            _commands.RegisterCommands<Info>();
+            _commands.RegisterCommands<Tools>();
+            _commands.RegisterCommands<Images>();
+            _commands.RegisterCommands<Fun>();
+
             await Task.CompletedTask;
         }
         catch (Exception e)
@@ -65,5 +47,23 @@ public class CommandsHandler
             var logger = new Logger("logs/logs.json");
             logger.Log($"Something wrong in CommandHandler: {e.Message}");
         }
+    }
+
+    public async Task LogAboutAllCommands()
+    {
+        var logger = new Logger("logs/logs.json");
+        var commandModules = _commands.RegisteredCommands.Values
+            .GroupBy(c => c.Module!.ModuleType.Name);
+        
+        logger.Log("[commands] info start:");
+        
+        foreach (var module in commandModules)
+        {
+            logger.Log($"[{module.Key}] Registered {module.Count()} command(s).");
+        }
+        
+        logger.Log("[commands] info end. ");
+        
+        await Task.CompletedTask;
     }
 }
