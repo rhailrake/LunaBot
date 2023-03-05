@@ -19,14 +19,14 @@ public class LunaBot
         {
             // Logs
             var logger = new Logger("logs/logs.json");
-            logger.Log("[Logs] attached!");
+            logger.Log("Logs attached!");
             // Logs
         
             // Config
-            logger.Log($"[info] Started loading LunaBot at {DateTime.Now}");
-            logger.Log("[info] Loading config file..");
+            logger.Log($"Started loading LunaBot at {DateTime.Now}");
+            logger.Log("Loading config file..");
             var config = Config.LoadFromFile("secrets/cfg.json");
-            logger.Log("[info] Loaded config file!");
+            logger.Log("Loaded config file!");
             // Config
 
             var discordConfig = new DiscordConfiguration()
@@ -43,7 +43,7 @@ public class LunaBot
             {
                 Timeout = TimeSpan.FromMinutes(2)
             });
-
+            
             Commands = Client.UseCommandsNext(new CommandsNextConfiguration
             {
                 StringPrefixes = new string[] { config.Prefix },
@@ -55,10 +55,9 @@ public class LunaBot
             var commandHandler = new CommandsHandler(Commands);
             await commandHandler.InstallCommandsAsync();
         
-            logger.Log("[status] Setting up status..");
+            logger.Log("Setting up Luna status..", Logger.LogLevel.Debug);
             Task.Run(() => new LunaStatus(Client).RunAsync());
-            logger.Log("[status] Loaded!");
-        
+
             await Client.ConnectAsync();
 
             await commandHandler.LogAboutAllCommands();
@@ -70,7 +69,7 @@ public class LunaBot
         catch (Exception e)
         {
             var logger = new Logger("logs/logs.json");
-            logger.Log($"Something wrong with LunaBot: {e.Message}");
+            logger.Log($"Something wrong with LunaBot: {e.Message}", Logger.LogLevel.Fatal);
         }
     }
     

@@ -36,7 +36,7 @@ public class LunaStatus
             catch (Exception ex)
             {
                 //var logger = new Logger("logs/logs.json");
-                //logger.Log($"Error updating Luna status: {ex.Message}");
+                //logger.Log($"Error updating Luna status: {ex.Message}", Logger.LogLevel.Debug );
             }
         }
     }

@@ -45,7 +45,7 @@ public class CommandsHandler
         catch (Exception e)
         {
             var logger = new Logger("logs/logs.json");
-            logger.Log($"Something wrong in CommandHandler: {e.Message}");
+            logger.Log($"Something wrong in CommandHandler: {e.Message}", Logger.LogLevel.Fatal);
         }
     }
 
@@ -55,14 +55,14 @@ public class CommandsHandler
         var commandModules = _commands.RegisteredCommands.Values
             .GroupBy(c => c.Module!.ModuleType.Name);
         
-        logger.Log("[commands] info start:");
+        logger.Log("info start:", Logger.LogLevel.Commands);
         
         foreach (var module in commandModules)
         {
-            logger.Log($"[{module.Key}] Registered {module.Count()} command(s).");
+            logger.Log($"[{module.Key}] Registered {module.Count()} command(s).", Logger.LogLevel.Commands);
         }
         
-        logger.Log("[commands] info end. ");
+        logger.Log("info end.", Logger.LogLevel.Commands);
         
         await Task.CompletedTask;
     }

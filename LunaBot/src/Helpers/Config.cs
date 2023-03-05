@@ -20,7 +20,7 @@ public class Config
         catch (Exception e)
         {
             var logger = new Logger("logs/logs.json");
-            logger.Log($"Something wrong in Config helper: {e.Message}");
+            logger.Log($"Something wrong in Config helper: {e.Message}", Logger.LogLevel.Fatal);
         }
         throw new InvalidOperationException();
     }

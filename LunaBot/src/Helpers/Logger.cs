@@ -1,3 +1,4 @@
+using DSharpPlus;
 using Newtonsoft.Json;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
@@ -8,6 +9,25 @@ namespace LunaBot.Helpers
     public class Logger
     {
         private readonly string _logFilePath;
+        
+        public enum LogLevel
+        {
+            Debug,
+            Info,
+            Warning,
+            Error,
+            Fatal,
+            Commands
+        }
+        
+        private LogLevel _level = LogLevel.Info;
+
+        public LogLevel Level
+        {
+            get => _level;
+            set => _level = value;
+        }
+
 
         public Logger(string logFilePath)
         {
@@ -15,17 +35,20 @@ namespace LunaBot.Helpers
             _logFilePath = absolutePath;
         }
 
-        public void Log(string message)
+        public void Log(string message, LogLevel level = LogLevel.Info)
         {
             var logEntry = new LogEntry
             {
                 Timestamp = DateTime.Now,
+                Level = level,
                 Message = message
             };
 
+            var logJson = JsonConvert.SerializeObject(logEntry);
+
             try
             {
-                var logs = new List<LogEntry>();
+                var logs = new List<string>();
 
                 // Читаем предыдущие записи
                 if (File.Exists(_logFilePath))
@@ -36,14 +59,13 @@ namespace LunaBot.Helpers
 
                         while ((line = reader.ReadLine()) != null)
                         {
-                            var log = JsonConvert.DeserializeObject<LogEntry>(line);
-                            logs.Add(log);
+                            logs.Add(line);
                         }
                     }
                 }
 
                 // Добавляем новую запись
-                logs.Add(logEntry);
+                logs.Add(logJson);
 
                 // Ограничиваем количество записей
                 if (logs.Count > 100)
@@ -56,16 +78,22 @@ namespace LunaBot.Helpers
                 {
                     foreach (var log in logs)
                     {
-                        var logJsonString = JsonConvert.SerializeObject(log);
-                        writer.WriteLine(logJsonString);
+                        writer.WriteLine(log);
                     }
                 }
+                
+                if (level == LogLevel.Fatal)
+                {
+                    Console.WriteLine("FATAL: Check logs.json");
+                }
+                
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error writing log entry to file: {ex.Message}");
             }
         }
+
 
         public List<LogEntry> GetLatestLogs(int maxEntries = 20)
         {
@@ -103,6 +131,7 @@ namespace LunaBot.Helpers
 
         public class LogEntry
         {
+            public LogLevel Level { get; set; }
             public DateTime Timestamp { get; set; }
             public string Message { get; set; }
         }
@@ -119,19 +148,52 @@ namespace LunaBot.Helpers
 
         [Command("logs")]
         [Description("Отображает последние логи")]
+        [RequirePermissions(Permissions.Administrator)]
         public async Task ShowLogs(CommandContext ctx)
         {
             var logs = _logger.GetLatestLogs();
-            
+            var logEntries = logs.Select(log => $"{log.Timestamp}: [{log.Level}] {log.Message}");
+
             var embed = new DiscordEmbedBuilder
             {
                 Title = "Последние логи:",
-                Description = string.Join("\n", logs.Select(log => $"{log.Timestamp}: {log.Message}")),
+                Description = string.Join("\n", logEntries),
                 Color = new DiscordColor(0xFF0000) // красный цвет
             };
 
             await ctx.RespondAsync(embed: embed.Build());
 
+        }
+
+        [Command("clearlogs")]
+        [Description("Полностью очищает логи")]
+        [RequirePermissions(Permissions.Administrator)]
+        public async Task ClearLogs(CommandContext ctx)
+        {
+            try
+            {
+                var LogFilePath = "logs/logs.json";
+                File.Delete(LogFilePath);
+                var successEmbed = new DiscordEmbedBuilder
+                {
+                    Title = "Успешно",
+                    Description = "Логи были полностью очищены",
+                    Color = new DiscordColor(0x00FF00) // зеленый цвет
+                };
+                await ctx.RespondAsync(embed: successEmbed.Build());
+                _logger.Log($"Succsesfully cleared logs!", Logger.LogLevel.Debug);
+            }
+            catch (Exception ex)
+            {
+                var errorEmbed = new DiscordEmbedBuilder
+                {
+                    Title = "Ошибка",
+                    Description = $"Не удалось очистить логи: {ex.Message}",
+                    Color = new DiscordColor(0xFF0000) // красный цвет
+                };
+                await ctx.RespondAsync(embed: errorEmbed.Build());
+                _logger.Log($"Something when executing clear logs command: {ex.Message}", Logger.LogLevel.Fatal);
+            }
         }
     }
 }
