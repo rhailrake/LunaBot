@@ -19,7 +19,7 @@ public class CommandsHandler
             {
                 var embed = new DiscordEmbedBuilder
                 {
-                    Title = "ERROR 404",
+                    Title = "ERR0R 404",
                     Description = "Команда не найдена, напишите !help для списка доступных команд.",
                     Color = new DiscordColor(0xFF0000)
                 };
@@ -32,6 +32,7 @@ public class CommandsHandler
     public async Task InstallCommandsAsync()
     {
         // Register commands here:
+        _commands.RegisterCommands<Logs>();
         _commands.RegisterCommands<Info>();
         _commands.RegisterCommands<Tools>();
         _commands.RegisterCommands<Images>();
