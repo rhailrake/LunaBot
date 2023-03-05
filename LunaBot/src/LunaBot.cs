@@ -1,6 +1,5 @@
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
-using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Extensions;
 using LunaBot.Helpers;
@@ -71,10 +70,5 @@ public class LunaBot
             var logger = new Logger("logs/logs.json");
             logger.Log($"Something wrong with LunaBot: {e.Message}", Logger.LogLevel.Fatal);
         }
-    }
-    
-    private Task OnClientReady(ReadyEventArgs e) 
-    {
-        return Task.CompletedTask;
     }
 }

@@ -34,6 +34,7 @@ public class CommandsHandler
         try
         {
             // Register commands here:
+            _commands.RegisterCommands<Control>();
             _commands.RegisterCommands<Logs>();
             _commands.RegisterCommands<Info>();
             _commands.RegisterCommands<Tools>();
