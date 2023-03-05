@@ -43,19 +43,27 @@ public class CommandsHandler
 
     public async Task LogAboutAllCommands()
     {
-        var logger = new Logger("logs/logs.json");
-        var commandModules = _commands.RegisteredCommands.Values
-            .GroupBy(c => c.Module!.ModuleType.Name);
-        
-        logger.Log("[commands] info start:");
-        
-        foreach (var module in commandModules)
+        try
         {
-            logger.Log($"[{module.Key}] Registered {module.Count()} command(s).");
+            var logger = new Logger("logs/logs.json");
+            var commandModules = _commands.RegisteredCommands.Values
+                .GroupBy(c => c.Module!.ModuleType.Name);
+        
+            logger.Log("[commands] info start:");
+        
+            foreach (var module in commandModules)
+            {
+                logger.Log($"[{module.Key}] Registered {module.Count()} command(s).");
+            }
+        
+            logger.Log("[commands] info end. ");
+        
+            await Task.CompletedTask;
         }
-        
-        logger.Log("[commands] info end. ");
-        
-        await Task.CompletedTask;
+        catch (Exception e)
+        {
+            var logger = new Logger("logs/logs.json");
+            logger.Log($"Something wrong in CommandHandler: {e.Message}");
+        }
     }
 }

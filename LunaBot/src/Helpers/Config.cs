@@ -12,7 +12,16 @@ public class Config
 
     public static Config LoadFromFile(string path)
     {
-        string json = File.ReadAllText(path);
-        return JsonConvert.DeserializeObject<Config>(json);
+        try
+        {
+            string json = File.ReadAllText(path);
+            return JsonConvert.DeserializeObject<Config>(json);
+        }
+        catch (Exception e)
+        {
+            var logger = new Logger("logs/logs.json");
+            logger.Log($"Something wrong in Config helper: {e.Message}");
+        }
+        throw new InvalidOperationException();
     }
 }
