@@ -45,7 +45,7 @@ public class LunaBot
             
             Commands = Client.UseCommandsNext(new CommandsNextConfiguration
             {
-                StringPrefixes = new string[] { config.Prefix },
+                StringPrefixes = new[] { config.Prefix },
                 EnableMentionPrefix = true,
                 EnableDms = false,
                 EnableDefaultHelp = false
@@ -55,7 +55,7 @@ public class LunaBot
             await commandHandler.InstallCommandsAsync();
         
             logger.Log("Setting up Luna status..", Logger.LogLevel.Debug);
-            Task.Run(() => new LunaStatus(Client).RunAsync());
+            await Task.Run(() => new LunaStatus(Client).RunAsync());
 
             await Client.ConnectAsync();
 
